@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Cricket Data for Ranking</h1>
+    <table #playerTable border="1">
+      <thead>
+        <tr>
+          <th>Ranking</th>
+          <th>Name</th>
+          <th>Runs</th>
+          <th>Balls</th>
+          <th>Fours</th>
+          <th>Sixes</th>
+          <th>Strike Rate</th>
+          <th>Team</th>
+          <th>Opposition</th>
+          <th>Match Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <script>
+      fetch("http://localhost:3200/getmendata")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("fetch Data", data);
+          const tableBody = document.getElementById("tableBody");
+          tableBody.innerHTML = "";
+          //populate data inside tbody
+          data.forEach((player) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${player.ranking}</td>
+            <td>${player.name}</td>
+            <td>${player.runs}</td>
+            <td>${player.balls}</td>
+            <td>${player.fours}</td>
+            <td>${player.sixes}</td>
+            <td>${player.sr}</td>
+            <td>${player.team}</td>
+            <td>${player.opposition}</td>
+            <td>${player.matchDate}</td>
+            <td>
+            <button onclick="editRow(this)">Edit</button>
+            <button onclick="deleteRow('${player.ranking}')">Delete</button>
+            <button style="display:none" onclick="saveRow(this)">Save</button>
+          </td>`;
+
+            tableBody.appendChild(row);
+          });
+        })
+        .catch((e) => console.log(e));
+
+      const deleteRow = async (playerId) => {
+        try {
+          const response = await fetch(
+            `http://localhost:3200/mens/${playerId}`,
+            {
+              method: "DELETE",
+            }
+          );
+          const data = await response.json();
+          //refrest
+          location.reload();
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    </script>
+  </body>
+</html>
+
+<!-- 
+
+row.innerHTML = ``;
+row.innerHTML = ``;
+row.innerHTML = ``;
+row.innerHTML = ``; -->
